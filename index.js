@@ -29,18 +29,25 @@ async function run() {
 
         const toyCollection = client.db('toyMaker').collection('toy')
 
-        app.get('/toy', async(req, res)=>{
-             const data  = toyCollection.find()
-             const result = await data.toArray()
-             res.send(result);
+        app.get('/toy', async (req, res) => {
+            const data = toyCollection.find()
+            const result = await data.toArray()
+            res.send(result);
         })
-        app.get('/toy/:id', async(req, res)=>{
+        app.get('/toy/:id', async (req, res) => {
             const id = req.params.id;
             console.log(id)
-            const data = {_id: new ObjectId(id)}
-             const result = await toyCollection.findOne(data);
-             res.send(result)
+            const data = { _id: new ObjectId(id) }
+            const result = await toyCollection.findOne(data);
+            res.send(result)
         })
+        // app.get('/toy/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     console.log(id)
+        //     const data = { _id: new ObjectId(id) }
+        //     const result = await toyCollection.findOne(data);
+        //     res.send(result)
+        // })
 
         app.post('/toy', async (req, res) => {
             const user = req.body;
@@ -49,9 +56,28 @@ async function run() {
             res.send(result)
         })
 
-        app.delete('/toy/:id', async(req, res)=>{
-            const id  = req.params.id;
-            const query = {_id: new ObjectId(id)}
+        app.put('/toy/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) }
+            const updated = req.body;
+            const updatedToy = {
+                $set: {
+                    name: updated.name,
+                    catagory: updated.catagory,
+                    rating: updated.rating,
+                    sub_catagory: updated.sub_catagory,
+                    img: updated.img,
+                    price: updated.price,
+
+                }
+            }
+            const result = await toyCollection.updateOne(filter, updatedToy);
+            res.send(result)
+        })
+
+        app.delete('/toy/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
             const result = await toyCollection.deleteOne(query);
             res.send(result)
         })
