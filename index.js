@@ -29,23 +29,23 @@ async function run() {
 
         const toyCollection = client.db('toyMaker').collection('toy')
 
-        app.get('/toy', async (req, res) => {
-            const data = toyCollection.find()
+        app.get('/toy/:text', async (req, res) => {
+            const text = req.params.text;
+            const query = {sub_category:text}
+            const data = toyCollection.find(query)
             const result = await data.toArray()
             res.send(result);
         })
-        app.get('/toy/:id', async (req, res) => {
-            const id = req.params.id;
-            console.log(id)
-            const data = { _id: new ObjectId(id) }
-            const result = await toyCollection.findOne(data);
+        app.get('/toy', async (req, res) => {
+            
+            const result = await toyCollection.find().toArray();
             res.send(result)
         })
         // app.get('/toy/:id', async (req, res) => {
-        //     const id = req.params.id;
+        //     const id = req.body.sub_catagory;
         //     console.log(id)
         //     const data = { _id: new ObjectId(id) }
-        //     const result = await toyCollection.findOne(data);
+        //     const result = await toyCollection.find(data);
         //     res.send(result)
         // })
 
@@ -68,7 +68,6 @@ async function run() {
                     sub_catagory: updated.sub_catagory,
                     img: updated.img,
                     price: updated.price,
-
                 }
             }
             const result = await toyCollection.updateOne(filter, updatedToy);
