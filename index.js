@@ -28,10 +28,18 @@ async function run() {
         // await client.connect();
 
         const toyCollection = client.db('toyMaker').collection('toy')
+        
 
         app.get('/toy/:text', async (req, res) => {
             const text = req.params.text;
             const query = {sub_category:text}
+            const data = toyCollection.find(query)
+            const result = await data.toArray()
+            res.send(result);
+        })
+        app.get('/toy/:text', async (req, res) => {
+            const text = parseInt(req.params.text);
+            const query = {_id:text}
             const data = toyCollection.find(query)
             const result = await data.toArray()
             res.send(result);
@@ -41,13 +49,14 @@ async function run() {
             const result = await toyCollection.find().toArray();
             res.send(result)
         })
-        // app.get('/toy/:id', async (req, res) => {
-        //     const id = req.body.sub_catagory;
-        //     console.log(id)
-        //     const data = { _id: new ObjectId(id) }
-        //     const result = await toyCollection.find(data);
-        //     res.send(result)
-        // })
+       
+        app.get('/toy/h/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const data = { _id: new ObjectId(id) }
+            const result = await toyCollection.findOne(data);
+            res.send(result)
+        })
 
         app.post('/toy', async (req, res) => {
             const user = req.body;
@@ -56,7 +65,7 @@ async function run() {
             res.send(result)
         })
 
-        app.put('/toy/:id', async (req, res) => {
+        app.patch('/toy/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) }
             const updated = req.body;
