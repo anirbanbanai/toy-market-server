@@ -28,28 +28,46 @@ async function run() {
         // await client.connect();
 
         const toyCollection = client.db('toyMaker').collection('toy')
-        
 
-        app.get('/toy/:text', async (req, res) => {
+
+        app.get('/toy/k/:text', async (req, res) => {
             const text = req.params.text;
-            const query = {sub_category:text}
+            const query = { sub_category: text }
             const data = toyCollection.find(query)
             const result = await data.toArray()
             res.send(result);
         })
-        app.get('/toy/:text', async (req, res) => {
-            const text = parseInt(req.params.text);
-            const query = {_id:text}
-            const data = toyCollection.find(query)
-            const result = await data.toArray()
-            res.send(result);
+        app.get('/toy/g/:email', async (req, res) => {
+            console.log(req.params.ememailail)
+            const result = await toyCollection.find({ postedBy: req.params.email }).toArray();
+            res.send(result)
+        })
+        app.get('/toy/g/:email/:text', async (req, res) => {
+            if (req.params.text == "accending") {
+                const result = await toyCollection.find().sort({ price: 1 }).toArray();
+                console.log(result);
+                return res.send(result)
+            }
+            if (req.params.text == "decending") {
+                const result = await toyCollection.find().sort({ price: -1 }).toArray();
+                console.log(result);
+                return res.send(result)
+            }
+            const result = await toyCollection.find({}).toArray();
+            res.send(result)
         })
         app.get('/toy', async (req, res) => {
-            
+
             const result = await toyCollection.find().toArray();
             res.send(result)
         })
-       
+        // app.get('/toy', async (req, res) => {
+
+        //     const cursor = toyCollection.find().sort({price: -1})
+        //     const result = await cursor.toArray();
+        //     res.send(result)
+        // })
+
         app.get('/toy/h/:id', async (req, res) => {
             const id = req.params.id;
             console.log(id)
@@ -77,6 +95,8 @@ async function run() {
                     sub_catagory: updated.sub_catagory,
                     img: updated.img,
                     price: updated.price,
+                    seller_name: updated.seller_name,
+                    quantity:updated.quantity
                 }
             }
             const result = await toyCollection.updateOne(filter, updatedToy);
