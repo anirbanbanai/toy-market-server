@@ -38,7 +38,7 @@ async function run() {
             res.send(result);
         })
         app.get('/toy/g/:email', async (req, res) => {
-            console.log(req.params.ememailail)
+            console.log(req.params.email)
             const result = await toyCollection.find({ postedBy: req.params.email }).toArray();
             res.send(result)
         })
